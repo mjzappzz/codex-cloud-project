@@ -1,56 +1,146 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>下雨天下雨特效</title>
+  <title>雨夜氛围特效</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg-top: #08101f;
-      --bg-bottom: #02050d;
-      --rain-light: rgba(215, 234, 255, 0.9);
-      --rain-shadow: rgba(94, 143, 206, 0.16);
-      --flash-color: rgba(255, 255, 255, 0.95);
+      --bg-top: #07101c;
+      --bg-mid: #0d1c32;
+      --bg-bottom: #02050c;
+      --mist: rgba(154, 197, 255, 0.08);
+      --rain-bright: rgba(235, 244, 255, 0.9);
+      --rain-soft: rgba(143, 187, 255, 0.12);
+      --glass: rgba(8, 17, 32, 0.44);
+      --glass-edge: rgba(199, 228, 255, 0.18);
+      --text-main: #eff6ff;
+      --text-soft: rgba(228, 237, 255, 0.72);
+      --accent: #8cc7ff;
+      --accent-warm: #ffd99a;
     }
 
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
-      min-height: 100vh;
-      background: radial-gradient(circle at 50% 0%, rgba(142, 190, 255, 0.12), transparent 22%),
-                  radial-gradient(circle at 20% 15%, rgba(89, 143, 214, 0.12), transparent 16%),
-                  linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-      position: relative;
-      font-family: "Segoe UI", "PingFang SC", "Noto Sans", Arial, sans-serif;
-      color: #fff;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
-    body::before {
+    body {
+      position: relative;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 20% 18%, rgba(120, 167, 243, 0.18), transparent 16%),
+        radial-gradient(circle at 78% 8%, rgba(174, 212, 255, 0.16), transparent 18%),
+        radial-gradient(circle at 50% 38%, rgba(61, 95, 148, 0.18), transparent 34%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
+      isolation: isolate;
+    }
+
+    body::before,
+    body::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 85% 20%, rgba(255,255,255,0.08), transparent 18%);
       pointer-events: none;
     }
 
-    .rain-wrap {
+    body::before {
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.05), transparent 26%),
+        radial-gradient(circle at center, transparent 55%, rgba(0, 0, 0, 0.28) 100%);
+      mix-blend-mode: screen;
+      opacity: 0.72;
+    }
+
+    body::after {
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.018) 0 1px,
+          transparent 1px 120px
+        );
+      opacity: 0.16;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .clouds,
+    .rain-wrap,
+    .dragon-wrap,
+    .lightning-wrap,
+    .mist,
+    .ground-glow,
+    .cityline {
       position: absolute;
       inset: 0;
-      overflow: hidden;
       pointer-events: none;
+    }
+
+    .cloud {
+      position: absolute;
+      top: 0;
+      height: 36vh;
+      border-radius: 50%;
+      filter: blur(10px);
+      opacity: 0.34;
+      background: radial-gradient(circle at center, rgba(163, 197, 248, 0.16), rgba(18, 28, 48, 0));
+      animation: cloudFloat 18s ease-in-out infinite;
+    }
+
+    .cloud:nth-child(1) {
+      left: -6%;
+      width: 36vw;
+      animation-duration: 20s;
+    }
+
+    .cloud:nth-child(2) {
+      left: 22%;
+      width: 42vw;
+      top: 4%;
+      opacity: 0.26;
+      animation-duration: 24s;
+      animation-delay: -6s;
+    }
+
+    .cloud:nth-child(3) {
+      right: -8%;
+      width: 34vw;
+      top: 2%;
+      opacity: 0.3;
+      animation-duration: 22s;
+      animation-delay: -10s;
+    }
+
+    .rain-wrap {
+      overflow: hidden;
     }
 
     .raindrop {
       position: absolute;
       bottom: 110%;
       width: 2px;
-      height: 100px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(145, 188, 255, 0.08));
+      height: 110px;
       border-radius: 999px;
-      filter: blur(0.25px);
+      background: linear-gradient(180deg, var(--rain-bright), var(--rain-soft));
+      filter: blur(0.3px);
+      opacity: 0.6;
+      transform: rotate(8deg);
       animation: dropFall linear infinite;
-      opacity: 0.55;
     }
 
     .raindrop::after {
@@ -58,107 +148,309 @@
       position: absolute;
       top: 98%;
       left: 50%;
-      width: 26px;
+      width: 28px;
       height: 4px;
       transform: translateX(-50%) scaleX(0.7);
-      background: rgba(255,255,255,0.14);
       border-radius: 999px;
-      filter: blur(0.9px);
-      opacity: 0.4;
+      background: rgba(230, 242, 255, 0.14);
+      filter: blur(1px);
+      opacity: 0.44;
     }
 
-    .raindrop:nth-child(1)  { left: 3%;  animation-duration: 1.8s; animation-delay: 0.05s; }
-    .raindrop:nth-child(2)  { left: 7%;  animation-duration: 1.75s; animation-delay: 0.35s; }
-    .raindrop:nth-child(3)  { left: 12%; animation-duration: 1.9s; animation-delay: 0.25s; }
-    .raindrop:nth-child(4)  { left: 17%; animation-duration: 1.7s; animation-delay: 0.12s; }
-    .raindrop:nth-child(5)  { left: 23%; animation-duration: 1.85s; animation-delay: 0.33s; }
-    .raindrop:nth-child(6)  { left: 28%; animation-duration: 1.95s; animation-delay: 0.18s; }
-    .raindrop:nth-child(7)  { left: 34%; animation-duration: 1.78s; animation-delay: 0.22s; }
-    .raindrop:nth-child(8)  { left: 40%; animation-duration: 1.82s; animation-delay: 0.08s; }
-    .raindrop:nth-child(9)  { left: 46%; animation-duration: 2s; animation-delay: 0.27s; }
-    .raindrop:nth-child(10) { left: 52%; animation-duration: 1.76s; animation-delay: 0.16s; }
-    .raindrop:nth-child(11) { left: 57%; animation-duration: 1.89s; animation-delay: 0.05s; }
-    .raindrop:nth-child(12) { left: 61%; animation-duration: 1.8s; animation-delay: 0.42s; }
-    .raindrop:nth-child(13) { left: 67%; animation-duration: 1.74s; animation-delay: 0.21s; }
-    .raindrop:nth-child(14) { left: 72%; animation-duration: 1.9s; animation-delay: 0.15s; }
-    .raindrop:nth-child(15) { left: 77%; animation-duration: 1.95s; animation-delay: 0.29s; }
-    .raindrop:nth-child(16) { left: 82%; animation-duration: 1.7s; animation-delay: 0.1s; }
-    .raindrop:nth-child(17) { left: 87%; animation-duration: 1.88s; animation-delay: 0.24s; }
-    .raindrop:nth-child(18) { left: 92%; animation-duration: 1.83s; animation-delay: 0.14s; }
+    .rain-wrap.back .raindrop {
+      height: 84px;
+      width: 1px;
+      opacity: 0.3;
+      filter: blur(0.5px);
+    }
+
+    .rain-wrap.front .raindrop {
+      height: 126px;
+      width: 2px;
+      opacity: 0.72;
+    }
+
+    .rain-wrap.back .raindrop:nth-child(1)  { left: 4%;  animation-duration: 2.4s; animation-delay: 0.2s; }
+    .rain-wrap.back .raindrop:nth-child(2)  { left: 10%; animation-duration: 2.6s; animation-delay: 1.3s; }
+    .rain-wrap.back .raindrop:nth-child(3)  { left: 16%; animation-duration: 2.45s; animation-delay: 0.9s; }
+    .rain-wrap.back .raindrop:nth-child(4)  { left: 22%; animation-duration: 2.7s; animation-delay: 1.8s; }
+    .rain-wrap.back .raindrop:nth-child(5)  { left: 30%; animation-duration: 2.35s; animation-delay: 0.4s; }
+    .rain-wrap.back .raindrop:nth-child(6)  { left: 38%; animation-duration: 2.6s; animation-delay: 1.5s; }
+    .rain-wrap.back .raindrop:nth-child(7)  { left: 45%; animation-duration: 2.5s; animation-delay: 0.8s; }
+    .rain-wrap.back .raindrop:nth-child(8)  { left: 54%; animation-duration: 2.75s; animation-delay: 2.1s; }
+    .rain-wrap.back .raindrop:nth-child(9)  { left: 61%; animation-duration: 2.4s; animation-delay: 0.6s; }
+    .rain-wrap.back .raindrop:nth-child(10) { left: 69%; animation-duration: 2.62s; animation-delay: 1.4s; }
+    .rain-wrap.back .raindrop:nth-child(11) { left: 77%; animation-duration: 2.48s; animation-delay: 0.1s; }
+    .rain-wrap.back .raindrop:nth-child(12) { left: 85%; animation-duration: 2.68s; animation-delay: 1.7s; }
+    .rain-wrap.back .raindrop:nth-child(13) { left: 92%; animation-duration: 2.52s; animation-delay: 0.5s; }
+
+    .rain-wrap.front .raindrop:nth-child(1)  { left: 3%;  animation-duration: 1.75s; animation-delay: 0.05s; }
+    .rain-wrap.front .raindrop:nth-child(2)  { left: 7%;  animation-duration: 1.68s; animation-delay: 0.35s; }
+    .rain-wrap.front .raindrop:nth-child(3)  { left: 12%; animation-duration: 1.82s; animation-delay: 0.25s; }
+    .rain-wrap.front .raindrop:nth-child(4)  { left: 17%; animation-duration: 1.7s; animation-delay: 0.12s; }
+    .rain-wrap.front .raindrop:nth-child(5)  { left: 23%; animation-duration: 1.84s; animation-delay: 0.33s; }
+    .rain-wrap.front .raindrop:nth-child(6)  { left: 28%; animation-duration: 1.9s; animation-delay: 0.18s; }
+    .rain-wrap.front .raindrop:nth-child(7)  { left: 34%; animation-duration: 1.76s; animation-delay: 0.22s; }
+    .rain-wrap.front .raindrop:nth-child(8)  { left: 40%; animation-duration: 1.82s; animation-delay: 0.08s; }
+    .rain-wrap.front .raindrop:nth-child(9)  { left: 46%; animation-duration: 1.95s; animation-delay: 0.27s; }
+    .rain-wrap.front .raindrop:nth-child(10) { left: 52%; animation-duration: 1.72s; animation-delay: 0.16s; }
+    .rain-wrap.front .raindrop:nth-child(11) { left: 57%; animation-duration: 1.87s; animation-delay: 0.05s; }
+    .rain-wrap.front .raindrop:nth-child(12) { left: 61%; animation-duration: 1.8s; animation-delay: 0.42s; }
+    .rain-wrap.front .raindrop:nth-child(13) { left: 67%; animation-duration: 1.74s; animation-delay: 0.21s; }
+    .rain-wrap.front .raindrop:nth-child(14) { left: 72%; animation-duration: 1.89s; animation-delay: 0.15s; }
+    .rain-wrap.front .raindrop:nth-child(15) { left: 77%; animation-duration: 1.93s; animation-delay: 0.29s; }
+    .rain-wrap.front .raindrop:nth-child(16) { left: 82%; animation-duration: 1.68s; animation-delay: 0.1s; }
+    .rain-wrap.front .raindrop:nth-child(17) { left: 87%; animation-duration: 1.86s; animation-delay: 0.24s; }
+    .rain-wrap.front .raindrop:nth-child(18) { left: 92%; animation-duration: 1.8s; animation-delay: 0.14s; }
+
+    .cityline {
+      top: auto;
+      bottom: 0;
+      height: 34vh;
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(2, 8, 18, 0.12) 20%, rgba(2, 7, 16, 0.82) 100%);
+      z-index: 1;
+    }
+
+    .cityline::before,
+    .cityline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      background-repeat: repeat-x;
+      background-position: bottom;
+    }
+
+    .cityline::before {
+      opacity: 0.55;
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 0 3%,
+          rgba(7, 16, 29, 0.9) 3% 6%,
+          transparent 6% 8%,
+          rgba(9, 18, 34, 0.88) 8% 12%,
+          transparent 12% 14%,
+          rgba(6, 14, 28, 0.92) 14% 17%,
+          transparent 17% 20%,
+          rgba(8, 17, 30, 0.88) 20% 25%,
+          transparent 25% 27%,
+          rgba(5, 12, 24, 0.92) 27% 31%,
+          transparent 31% 34%,
+          rgba(7, 16, 28, 0.86) 34% 39%,
+          transparent 39% 42%,
+          rgba(8, 16, 26, 0.92) 42% 46%,
+          transparent 46% 50%,
+          rgba(7, 15, 26, 0.88) 50% 54%,
+          transparent 54% 58%,
+          rgba(6, 14, 24, 0.92) 58% 63%,
+          transparent 63% 67%,
+          rgba(7, 16, 28, 0.88) 67% 72%,
+          transparent 72% 76%,
+          rgba(7, 15, 28, 0.9) 76% 82%,
+          transparent 82% 85%,
+          rgba(8, 17, 31, 0.86) 85% 90%,
+          transparent 90% 100%
+        );
+      clip-path: polygon(0 100%, 0 48%, 7% 56%, 7% 36%, 15% 44%, 15% 20%, 24% 34%, 24% 52%, 33% 52%, 33% 26%, 45% 42%, 45% 18%, 58% 48%, 58% 30%, 68% 34%, 68% 58%, 77% 40%, 77% 24%, 88% 50%, 88% 28%, 100% 44%, 100% 100%);
+    }
+
+    .cityline::after {
+      height: 78%;
+      opacity: 0.16;
+      filter: blur(2px);
+      background-image: linear-gradient(180deg, transparent 0%, rgba(140, 182, 238, 0.22) 100%);
+    }
+
+    .ground-glow {
+      top: auto;
+      bottom: -2vh;
+      height: 24vh;
+      z-index: 2;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(135, 182, 255, 0.14), transparent 34%),
+        linear-gradient(180deg, transparent 0%, rgba(6, 13, 23, 0.7) 72%, rgba(3, 8, 15, 0.94) 100%);
+    }
+
+    .mist {
+      z-index: 3;
+      background:
+        radial-gradient(circle at 20% 70%, var(--mist), transparent 28%),
+        radial-gradient(circle at 70% 78%, rgba(182, 217, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, transparent 0%, rgba(152, 197, 255, 0.06) 76%, rgba(0, 0, 0, 0.16) 100%);
+      filter: blur(8px);
+      animation: mistShift 14s ease-in-out infinite;
+    }
 
     .dragon-wrap {
-      position: absolute;
-      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: none;
+      z-index: 4;
       overflow: hidden;
     }
 
     .dragon {
-      width: clamp(320px, 50vw, 520px);
-      max-width: 560px;
+      width: clamp(320px, 48vw, 560px);
       opacity: 0.08;
-      transform: scale(0.96);
-      filter: blur(0.95px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translateY(10px) scale(0.96);
+      filter: blur(0.85px);
       animation: dragonReveal 11s ease-in-out infinite;
     }
 
     .dragon svg {
+      display: block;
       width: 100%;
       height: auto;
+      opacity: 0.92;
+      filter: drop-shadow(0 0 26px rgba(119, 186, 255, 0.2));
+    }
+
+    .content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      width: 100%;
+      height: 100%;
+      padding: clamp(24px, 5vw, 64px);
+    }
+
+    .panel {
+      width: min(460px, calc(100vw - 40px));
+      padding: 28px 28px 24px;
+      border: 1px solid var(--glass-edge);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+        var(--glass);
+      backdrop-filter: blur(14px) saturate(120%);
+      box-shadow:
+        0 22px 80px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      animation: panelFloat 9s ease-in-out infinite;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: var(--text-soft);
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), rgba(140, 199, 255, 0.9));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 7vw, 62px);
+      line-height: 0.98;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.38);
+    }
+
+    h1 span {
       display: block;
-      opacity: 0.9;
-      filter: drop-shadow(0 0 18px rgba(132, 191, 255, 0.18));
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.42em;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      margin-top: 12px;
+      text-transform: uppercase;
+    }
+
+    .description {
+      margin: 16px 0 24px;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 14px 14px 12px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .stat span {
+      display: block;
+      color: rgba(228, 237, 255, 0.62);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .lightning-wrap {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      z-index: 6;
       overflow: hidden;
     }
 
     .flash {
       position: absolute;
       inset: 0;
-      background: rgba(255,255,255,0);
+      background: rgba(255, 255, 255, 0);
       animation: lightningGlow 11s ease-in-out infinite;
     }
 
     .bolt {
       position: absolute;
       width: 4px;
-      height: 170px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0));
-      filter: blur(0.4px);
+      height: 180px;
       opacity: 0;
       transform-origin: top;
-    }
-
-    .bolt:nth-child(1) {
-      --r: 7deg;
-      left: 20%;
-      top: 6%;
-      transform: rotate(7deg);
-      animation: lightningStrike 11s ease-in-out infinite;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0));
+      filter: blur(0.4px) drop-shadow(0 0 10px rgba(199, 224, 255, 0.6));
     }
 
     .bolt:nth-child(2) {
-      --r: -8deg;
-      left: 62%;
-      top: 12%;
-      transform: rotate(-8deg);
-      animation: lightningStrike 13s ease-in-out infinite 2s;
+      --r: 8deg;
+      left: 18%;
+      top: 8%;
+      transform: rotate(8deg);
+      animation: lightningStrike 11s ease-in-out infinite;
     }
 
     .bolt:nth-child(3) {
-      --r: 3deg;
-      left: 80%;
-      top: 4%;
-      transform: rotate(3deg);
+      --r: -6deg;
+      left: 61%;
+      top: 13%;
+      transform: rotate(-6deg);
+      animation: lightningStrike 13s ease-in-out infinite 2s;
+    }
+
+    .bolt:nth-child(4) {
+      --r: 4deg;
+      left: 82%;
+      top: 6%;
+      transform: rotate(4deg);
       animation: lightningStrike 10s ease-in-out infinite 5s;
     }
 
@@ -168,94 +460,261 @@
       position: absolute;
       left: 50%;
       width: 6px;
-      height: 50px;
+      height: 54px;
       background: inherit;
       transform-origin: top;
     }
 
-    .bolt::before { top: 40px; transform: translateX(-50%) rotate(24deg); }
-    .bolt::after { top: 80px; transform: translateX(-50%) rotate(-22deg); }
+    .bolt::before {
+      top: 40px;
+      transform: translateX(-50%) rotate(24deg);
+    }
+
+    .bolt::after {
+      top: 84px;
+      transform: translateX(-50%) rotate(-22deg);
+    }
 
     @keyframes dropFall {
-      0% { transform: translateY(0) translateX(0); opacity: 0; }
-      10% { opacity: 0.6; }
-      80% { opacity: 0.6; }
-      100% { transform: translateY(120vh) translateX(12px); opacity: 0; }
+      0% {
+        transform: translateY(0) translateX(0) rotate(8deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: inherit;
+      }
+      80% {
+        opacity: inherit;
+      }
+      100% {
+        transform: translateY(120vh) translateX(16px) rotate(8deg);
+        opacity: 0;
+      }
     }
 
     @keyframes dragonReveal {
-      0%, 12%, 100% { opacity: 0.08; transform: scale(0.96); }
-      13%, 14% { opacity: 0.22; transform: scale(1); }
-      15%, 16% { opacity: 0.09; transform: scale(0.98); }
-      42%, 43% { opacity: 0.24; transform: scale(1.02); }
-      44%, 45% { opacity: 0.1; transform: scale(0.98); }
-      74%, 75% { opacity: 0.21; transform: scale(1.01); }
-      76%, 77% { opacity: 0.09; transform: scale(0.97); }
+      0%, 12%, 100% {
+        opacity: 0.08;
+        transform: translateY(10px) scale(0.96);
+      }
+      13%, 14% {
+        opacity: 0.24;
+        transform: translateY(0) scale(1);
+      }
+      15%, 16% {
+        opacity: 0.09;
+        transform: translateY(8px) scale(0.98);
+      }
+      42%, 43% {
+        opacity: 0.24;
+        transform: translateY(-2px) scale(1.02);
+      }
+      44%, 45% {
+        opacity: 0.1;
+        transform: translateY(8px) scale(0.98);
+      }
+      74%, 75% {
+        opacity: 0.22;
+        transform: translateY(-1px) scale(1.01);
+      }
+      76%, 77% {
+        opacity: 0.09;
+        transform: translateY(10px) scale(0.97);
+      }
     }
 
     @keyframes lightningGlow {
-      0%, 12%, 100% { background: rgba(255,255,255,0); }
-      13%, 14% { background: rgba(255,255,255,0.22); }
-      15%, 16% { background: rgba(255,255,255,0); }
-      42%, 43% { background: rgba(255,255,255,0.28); }
-      44%, 45% { background: rgba(255,255,255,0); }
-      74%, 75% { background: rgba(255,255,255,0.2); }
-      76%, 77% { background: rgba(255,255,255,0); }
+      0%, 12%, 100% {
+        background: rgba(255, 255, 255, 0);
+      }
+      13%, 14% {
+        background: rgba(255, 255, 255, 0.18);
+      }
+      15%, 16% {
+        background: rgba(255, 255, 255, 0);
+      }
+      42%, 43% {
+        background: rgba(230, 239, 255, 0.24);
+      }
+      44%, 45% {
+        background: rgba(255, 255, 255, 0);
+      }
+      74%, 75% {
+        background: rgba(255, 255, 255, 0.16);
+      }
+      76%, 77% {
+        background: rgba(255, 255, 255, 0);
+      }
     }
 
     @keyframes lightningStrike {
-      0%, 93%, 100% { opacity: 0; }
-      94% { opacity: 1; transform: scaleY(1) translateY(0) rotate(var(--r)); }
-      95% { opacity: 1; transform: scaleY(1.1) translateY(-6px) rotate(var(--r)); }
-      96% { opacity: 0; transform: scaleY(1.2) translateY(-12px) rotate(var(--r)); }
+      0%, 93%, 100% {
+        opacity: 0;
+      }
+      94% {
+        opacity: 1;
+        transform: scaleY(1) translateY(0) rotate(var(--r));
+      }
+      95% {
+        opacity: 1;
+        transform: scaleY(1.08) translateY(-6px) rotate(var(--r));
+      }
+      96% {
+        opacity: 0;
+        transform: scaleY(1.16) translateY(-12px) rotate(var(--r));
+      }
     }
 
-    @media (max-width: 700px) {
-      .dragon { width: 220px; }
+    @keyframes mistShift {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(0, -6px, 0) scale(1.02);
+      }
+    }
+
+    @keyframes cloudFloat {
+      0%, 100% {
+        transform: translateX(0) translateY(0);
+      }
+      50% {
+        transform: translateX(18px) translateY(8px);
+      }
+    }
+
+    @keyframes panelFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .content {
+        align-items: flex-end;
+        padding: 20px;
+      }
+
+      .panel {
+        padding: 22px 18px 18px;
+        border-radius: 22px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .dragon {
+        width: min(72vw, 340px);
+      }
+
+      .cityline {
+        height: 28vh;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="rain-wrap">
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-    <div class="raindrop"></div>
-  </div>
-  <div class="dragon-wrap">
-    <div class="dragon">
-      <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="dragonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.35)" />
-            <stop offset="100%" stop-color="rgba(145, 188, 255, 0.18)" />
-          </linearGradient>
-        </defs>
-        <path d="M122 225 C132 164 187 140 244 133 C286 98 338 88 390 102 C430 70 478 54 520 86 C514 92 500 93 487 108 C471 126 470 151 483 173 C504 186 533 176 553 198 C544 209 520 195 505 186 C493 204 474 218 446 224 C426 234 398 235 366 228 C324 218 290 206 255 216 C220 228 190 246 160 238 C144 232 132 220 122 225 Z" fill="url(#dragonGrad)" opacity="0.88"/>
-        <path d="M232 240 C215 248 198 260 182 266 C172 279 160 295 148 310 C168 305 188 298 210 298 C236 299 270 312 308 314 C340 308 370 286 382 254 C370 263 354 272 334 280 C310 292 282 300 254 298 C244 287 238 268 232 240 Z" fill="rgba(255,255,255,0.16)" />
-        <path d="M408 142 C418 126 432 106 450 95 C462 88 478 92 486 102 C478 100 468 107 460 116 C448 130 442 146 438 164 C432 173 426 186 420 206 C426 190 430 170 408 142 Z" fill="rgba(255,255,255,0.2)" />
-      </svg>
+  <main class="scene">
+    <div class="clouds">
+      <div class="cloud"></div>
+      <div class="cloud"></div>
+      <div class="cloud"></div>
     </div>
-  </div>
-  <div class="lightning-wrap">
-    <div class="flash"></div>
-    <div class="bolt"></div>
-    <div class="bolt"></div>
-    <div class="bolt"></div>
-  </div>
+
+    <div class="rain-wrap back">
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+    </div>
+
+    <div class="cityline"></div>
+    <div class="ground-glow"></div>
+    <div class="mist"></div>
+
+    <div class="dragon-wrap">
+      <div class="dragon">
+        <svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dragonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.42)" />
+              <stop offset="100%" stop-color="rgba(145,188,255,0.16)" />
+            </linearGradient>
+          </defs>
+          <path d="M122 225 C132 164 187 140 244 133 C286 98 338 88 390 102 C430 70 478 54 520 86 C514 92 500 93 487 108 C471 126 470 151 483 173 C504 186 533 176 553 198 C544 209 520 195 505 186 C493 204 474 218 446 224 C426 234 398 235 366 228 C324 218 290 206 255 216 C220 228 190 246 160 238 C144 232 132 220 122 225 Z" fill="url(#dragonGrad)" opacity="0.9"/>
+          <path d="M232 240 C215 248 198 260 182 266 C172 279 160 295 148 310 C168 305 188 298 210 298 C236 299 270 312 308 314 C340 308 370 286 382 254 C370 263 354 272 334 280 C310 292 282 300 254 298 C244 287 238 268 232 240 Z" fill="rgba(255,255,255,0.16)" />
+          <path d="M408 142 C418 126 432 106 450 95 C462 88 478 92 486 102 C478 100 468 107 460 116 C448 130 442 146 438 164 C432 173 426 186 420 206 C426 190 430 170 408 142 Z" fill="rgba(255,255,255,0.22)" />
+        </svg>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="panel">
+        <div class="eyebrow">Rain Night</div>
+        <h1>
+          雨落无声
+          <span>Storm / Atmosphere / Motion</span>
+        </h1>
+        <p class="description">
+          把原本单一的雨幕改成更完整的雨夜场景。远处有城市轮廓，近处有雾气和玻璃质感，闪电出现时整个空间会一起被提亮。
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <strong>2 Layer</strong>
+            <span>Rain Depth</span>
+          </div>
+          <div class="stat">
+            <strong>Glass</strong>
+            <span>UI Panel</span>
+          </div>
+          <div class="stat">
+            <strong>Storm</strong>
+            <span>Light Pulse</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="rain-wrap front">
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+      <div class="raindrop"></div>
+    </div>
+
+    <div class="lightning-wrap">
+      <div class="flash"></div>
+      <div class="bolt"></div>
+      <div class="bolt"></div>
+      <div class="bolt"></div>
+    </div>
+  </main>
 </body>
 </html>
