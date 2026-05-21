@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToDesk 安装流程图</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --panel: #fffaf2;
+      --ink: #1f2a37;
+      --muted: #5b6574;
+      --line: #d7c4a7;
+      --accent: #c65d2e;
+      --accent-2: #2c6e63;
+      --accent-3: #d9a441;
+      --shadow: 0 18px 45px rgba(84, 58, 20, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(198, 93, 46, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(44, 110, 99, 0.12), transparent 22%),
+        linear-gradient(180deg, #f8f4ec 0%, var(--bg) 100%);
+      color: var(--ink);
+    }
+
+    .page {
+      width: min(1440px, calc(100vw - 40px));
+      margin: 24px auto;
+      padding: 36px;
+      background: rgba(255, 250, 242, 0.92);
+      border: 1px solid rgba(215, 196, 167, 0.7);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 4vw, 54px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 780px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(198, 93, 46, 0.22);
+      background: rgba(198, 93, 46, 0.08);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid rgba(215, 196, 167, 0.85);
+      border-radius: 22px;
+      padding: 20px 20px 18px;
+      min-height: 180px;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-3));
+    }
+
+    .card h2,
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .span-12 { grid-column: span 12; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .span-8 { grid-column: span 8; }
+
+    .step-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .step-no {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(44, 110, 99, 0.12);
+      color: var(--accent-2);
+      font-weight: 800;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .flow-item {
+      position: relative;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid rgba(215, 196, 167, 0.85);
+      border-radius: 18px;
+      min-height: 140px;
+    }
+
+    .flow-item:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 10px 25px rgba(198, 93, 46, 0.2);
+    }
+
+    .flow-item h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .flow-item code,
+    .code-block code {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #223046;
+    }
+
+    .code-block {
+      margin-top: 10px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px dashed rgba(44, 110, 99, 0.28);
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .tip {
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(249,244,235,0.95));
+      border: 1px solid rgba(215, 196, 167, 0.85);
+    }
+
+    .tip strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    @media (max-width: 1100px) {
+      .span-6, .span-4, .span-8 {
+        grid-column: span 12;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-item:not(:last-child)::after {
+        content: "↓";
+        left: 50%;
+        top: auto;
+        right: auto;
+        bottom: -11px;
+        transform: translateX(-50%);
+      }
+
+      .tips {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <h1>ToDesk 安装流程图</h1>
+        <p>适用内容包括 Rocky 9.4 与 Ubuntu 22.04 的软件安装、依赖准备、Wayland 黑屏处理、依赖缺失排查，以及卸载命令。页面结构按 PPT 式信息卡片组织，便于截图、演示或二次改写。</p>
+      </div>
+      <div class="badge">HTML Flow</div>
+    </section>
+
+    <section class="grid">
+      <article class="card span-12">
+        <h2>总流程</h2>
+        <div class="flow">
+          <div class="flow-item">
+            <h4>1. 选择系统</h4>
+            <p>根据 Rocky 9.4 或 Ubuntu 22.04 进入对应安装分支。</p>
+          </div>
+          <div class="flow-item">
+            <h4>2. 安装软件包</h4>
+            <p>下载对应的 RPM 或 DEB 安装包，执行安装命令。</p>
+          </div>
+          <div class="flow-item">
+            <h4>3. 补齐依赖</h4>
+            <p>安装桌面、图形、音频与 Qt 相关依赖库。</p>
+          </div>
+          <div class="flow-item">
+            <h4>4. 排障与验证</h4>
+            <p>处理黑屏、检查缺失库，并按需重启服务。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="card span-6">
+        <h2>Rocky 9.4</h2>
+        <div class="step-line"><span class="step-no">A</span><span>下载安装包并安装</span></div>
+        <div class="code-block">
+          <code>wget http://171.221.252.54:8573/chfs/shared/%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E5%88%86%E4%BA%AB/%E8%BF%9C%E7%A8%8B%E8%BD%AF%E4%BB%B6/todesk-v4.8.6.2-x86_64.rpm
+sudo rpm -Uvh todesk-v4.8.6.2-x86_64.rpm
+
+wget http://171.221.252.54:8573/chfs/shared/%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E5%88%86%E4%BA%AB/%E8%BF%9C%E7%A8%8B%E8%BD%AF%E4%BB%B6/todesk-v4.7.2.0-x86_64.rpm
+sudo rpm -Uvh todesk-v4.7.2.0-x86_64.rpm</code>
+        </div>
+        <div class="step-line"><span class="step-no">B</span><span>安装依赖</span></div>
+        <div class="code-block">
+          <code>sudo yum install -y gtk3 libXrandr libXcomposite libXdamage libXtst libXi libXcursor libXfixes libXinerama libXScrnSaver mesa-libGL mesa-libEGL alsa-lib xcb-util-keysyms xcb-util-wm fuse3 fuse3-libs qt5-qtbase qt5-qtbase-gui qt5-qtx11extras libxkbcommon-x11 libappindicator-gtk3 libdbusmenu</code>
+        </div>
+      </article>
+
+      <article class="card span-6">
+        <h2>Ubuntu 22.04</h2>
+        <div class="step-line"><span class="step-no">A</span><span>下载安装包并安装</span></div>
+        <div class="code-block">
+          <code>wget http://171.221.252.54:8573/chfs/shared/%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E5%88%86%E4%BA%AB/%E8%BF%9C%E7%A8%8B%E8%BD%AF%E4%BB%B6/todesk-v4.8.6.2-amd64.deb
+sudo apt-get install ./todesk-v4.8.6.2-amd64.deb
+
+wget http://171.221.252.54:8573/chfs/shared/%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E5%88%86%E4%BA%AB/%E8%BF%9C%E7%A8%8B%E8%BD%AF%E4%BB%B6/todesk-v4.7.2.0-amd64.deb
+sudo apt-get install ./todesk-v4.7.2.0-amd64.deb</code>
+        </div>
+        <div class="step-line"><span class="step-no">B</span><span>更新索引并补依赖</span></div>
+        <div class="code-block">
+          <code>sudo apt update
+sudo apt install -y libglib2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libx11-xcb1</code>
+        </div>
+      </article>
+
+      <article class="card span-8">
+        <h2>黑屏处理</h2>
+        <p>ToDesk 常见黑屏原因之一是桌面环境使用了 Wayland。可以改为 Xorg 并重启显示管理器与 ToDesk 服务。</p>
+        <div class="flow">
+          <div class="flow-item">
+            <h4>1. 修改 GDM</h4>
+            <code>sudo sed -i 's/^#WaylandEnable=.*/WaylandEnable=false/' /etc/gdm/custom.conf</code>
+          </div>
+          <div class="flow-item">
+            <h4>2. 修改 GDM3</h4>
+            <code>sudo sed -i 's/^#WaylandEnable=.*/WaylandEnable=false/' /etc/gdm3/custom.conf</code>
+          </div>
+          <div class="flow-item">
+            <h4>3. 重启桌面</h4>
+            <code>sudo systemctl restart gdm
+sudo systemctl restart gdm3</code>
+          </div>
+          <div class="flow-item">
+            <h4>4. 重启 ToDesk</h4>
+            <code>sudo systemctl restart todeskd.service</code>
+          </div>
+        </div>
+      </article>
+
+      <article class="card span-4">
+        <h2>依赖排查</h2>
+        <p>如果安装后无法启动，优先检查运行时库是否缺失。</p>
+        <div class="code-block">
+          <code>ldd /opt/todesk/bin/ToDesk_Service | grep "not found"</code>
+        </div>
+        <p>输出中若存在 `not found`，继续安装对应系统缺失的库。</p>
+      </article>
+
+      <article class="card span-12">
+        <h2>补充操作</h2>
+        <div class="tips">
+          <div class="tip">
+            <strong>Rocky 卸载</strong>
+            <code>sudo yum remove -y todesk</code>
+          </div>
+          <div class="tip">
+            <strong>Ubuntu 卸载</strong>
+            <code>sudo apt remove -y todesk</code>
+          </div>
+          <div class="tip">
+            <strong>使用建议</strong>
+            <div>如果是服务器或远程桌面环境，优先确认当前登录会话是否使用 Xorg，避免把安装问题和图形会话问题混在一起。</div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
