@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>雨夜城市</title>
+  <title>雨夜街道</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg-top: #07101d;
-      --bg-mid: #10233f;
-      --bg-bottom: #04070d;
-      --ink: #eff5ff;
-      --soft: rgba(227, 236, 255, 0.7);
-      --muted: rgba(209, 221, 244, 0.46);
-      --line: rgba(198, 225, 255, 0.14);
-      --glass: rgba(8, 18, 32, 0.4);
-      --cyan: #8fd0ff;
-      --blue: #4ea0ff;
-      --gold: #ffcf7e;
-      --rose: #ff8cab;
+      --sky-top: #0d1325;
+      --sky-mid: #1a2038;
+      --sky-bottom: #1e2737;
+      --road-dark: #060a11;
+      --road-gloss: rgba(180, 205, 238, 0.12);
+      --road-line: #e8b543;
+      --leaf-bright: #8bc75c;
+      --leaf-deep: #21441e;
+      --lamp: #fff4c2;
+      --lamp-halo: rgba(255, 245, 197, 0.26);
+      --window: rgba(255, 255, 255, 0.8);
+      --rail: #8d8475;
     }
 
     * {
@@ -34,40 +34,8 @@
     }
 
     body {
-      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 18% 16%, rgba(101, 150, 255, 0.22), transparent 18%),
-        radial-gradient(circle at 76% 14%, rgba(139, 215, 255, 0.14), transparent 22%),
-        radial-gradient(circle at 56% 48%, rgba(79, 117, 190, 0.18), transparent 26%),
-        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 50%, var(--bg-bottom) 100%);
-      position: relative;
-      isolation: isolate;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    body::before {
-      background:
-        linear-gradient(115deg, rgba(255, 255, 255, 0.05), transparent 24%),
-        radial-gradient(circle at center, transparent 52%, rgba(0, 0, 0, 0.34) 100%);
-      mix-blend-mode: screen;
-      opacity: 0.72;
-    }
-
-    body::after {
-      background-image:
-        radial-gradient(rgba(255, 255, 255, 0.08) 0.6px, transparent 0.6px),
-        radial-gradient(rgba(255, 255, 255, 0.04) 0.6px, transparent 0.6px);
-      background-position: 0 0, 16px 16px;
-      background-size: 32px 32px;
-      opacity: 0.18;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, var(--sky-top), var(--sky-mid) 48%, var(--sky-bottom));
     }
 
     .scene {
@@ -75,751 +43,718 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.05), transparent 24%),
+        radial-gradient(circle at 78% 32%, rgba(114, 145, 221, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(5, 9, 18, 0.08), rgba(0, 0, 0, 0.24));
     }
 
-    .ambient,
-    .skyline,
-    .reflection,
-    .mist,
-    .lightning,
-    .glass-streaks,
-    .rain-layer,
-    .drops {
+    .scene::before,
+    .scene::after {
+      content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
     }
 
-    .ambient {
+    .scene::before {
       background:
-        radial-gradient(circle at 76% 20%, rgba(151, 207, 255, 0.08), transparent 28%),
-        radial-gradient(circle at 84% 76%, rgba(255, 145, 179, 0.08), transparent 16%),
-        radial-gradient(circle at 14% 74%, rgba(255, 207, 126, 0.1), transparent 18%);
+        radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.04), transparent 12%),
+        radial-gradient(circle at 86% 16%, rgba(255, 255, 255, 0.035), transparent 14%),
+        radial-gradient(circle at 50% 55%, transparent 40%, rgba(0, 0, 0, 0.26) 100%);
+    }
+
+    .scene::after {
+      background-image:
+        radial-gradient(rgba(255, 255, 255, 0.055) 0.6px, transparent 0.6px),
+        radial-gradient(rgba(255, 255, 255, 0.028) 0.6px, transparent 0.6px);
+      background-size: 28px 28px, 36px 36px;
+      background-position: 0 0, 12px 8px;
+      opacity: 0.18;
+      mix-blend-mode: screen;
+    }
+
+    .sky-glow,
+    .city,
+    .trees,
+    .road-wrap,
+    .street-furniture,
+    .rain-back,
+    .rain-front,
+    .mist,
+    .lens-drops,
+    .road-sparkles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .sky-glow {
+      background:
+        radial-gradient(circle at 50% 22%, rgba(178, 194, 255, 0.1), transparent 20%),
+        radial-gradient(circle at 56% 16%, rgba(255, 255, 255, 0.05), transparent 10%);
       filter: blur(8px);
-      animation: breathe 10s ease-in-out infinite;
     }
 
-    .moon {
-      position: absolute;
-      top: 11vh;
-      right: 10vw;
-      width: clamp(96px, 12vw, 172px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.98), rgba(210, 234, 255, 0.92) 46%, rgba(152, 188, 232, 0.3) 68%, rgba(152, 188, 232, 0) 100%);
-      box-shadow:
-        0 0 24px rgba(201, 225, 255, 0.38),
-        0 0 110px rgba(130, 183, 255, 0.18);
-      opacity: 0.94;
-    }
-
-    .moon::before,
-    .moon::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-    }
-
-    .moon::before {
-      inset: -22%;
-      border: 1px solid rgba(220, 236, 255, 0.1);
-    }
-
-    .moon::after {
-      top: 24%;
-      left: 24%;
-      width: 18%;
-      height: 18%;
-      background: rgba(136, 169, 206, 0.14);
-      box-shadow:
-        24px 28px 0 8px rgba(136, 169, 206, 0.08),
-        -12px 42px 0 3px rgba(136, 169, 206, 0.06);
-    }
-
-    .beam {
-      position: absolute;
-      right: 8vw;
-      top: 4vh;
-      width: 28vw;
-      height: 72vh;
-      background: linear-gradient(180deg, rgba(148, 203, 255, 0.12), rgba(148, 203, 255, 0));
-      clip-path: polygon(42% 0, 70% 0, 100% 100%, 0 100%);
-      filter: blur(12px);
-      opacity: 0.56;
-    }
-
-    .skyline {
-      top: auto;
-      bottom: 0;
-      height: 48vh;
+    .city {
       z-index: 2;
     }
 
-    .buildings {
-      position: absolute;
-      inset: auto 0 0;
-      display: flex;
-      align-items: flex-end;
-      gap: 1.1vw;
-      height: 100%;
-      padding: 0 2vw;
-    }
-
     .building {
-      position: relative;
-      flex: 1 1 0;
-      min-width: 44px;
-      border-radius: 6px 6px 0 0;
-      background:
-        linear-gradient(180deg, rgba(22, 37, 62, 0.94), rgba(5, 12, 22, 0.98));
+      position: absolute;
+      bottom: 38%;
+      width: clamp(34px, 7vw, 110px);
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, rgba(35, 43, 68, 0.96), rgba(14, 18, 28, 0.98));
       box-shadow:
-        inset 1px 0 0 rgba(255, 255, 255, 0.04),
-        inset -1px 0 0 rgba(255, 255, 255, 0.02);
-      overflow: hidden;
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 0 28px rgba(0, 0, 0, 0.18);
     }
 
-    .building::before {
+    .building::after {
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(180deg, rgba(150, 205, 255, 0.14), transparent 34%),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 30%);
-      opacity: 0.7;
+      background: linear-gradient(180deg, rgba(122, 145, 214, 0.12), transparent 42%);
     }
 
     .windows {
       position: absolute;
-      inset: 10% 12% 8%;
+      inset: 6% 12% 4%;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px 6px;
+      gap: 5px 4px;
       align-content: start;
     }
 
-    .window {
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(255, 216, 157, 0.16);
-      box-shadow: 0 0 8px rgba(255, 207, 126, 0.06);
+    .win {
+      height: 5px;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    .window.lit {
-      background: linear-gradient(90deg, rgba(255, 210, 140, 0.92), rgba(255, 147, 170, 0.85));
-      box-shadow:
-        0 0 12px rgba(255, 207, 126, 0.28),
-        0 0 22px rgba(255, 140, 170, 0.12);
+    .win.lit {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(204, 216, 244, 0.82));
+      box-shadow: 0 0 7px rgba(255, 255, 255, 0.2);
     }
 
-    .reflection {
-      top: auto;
-      bottom: -3vh;
-      height: 30vh;
-      z-index: 3;
+    .road-wrap {
+      z-index: 4;
+    }
+
+    .road {
+      position: absolute;
+      left: 50%;
+      bottom: -1%;
+      width: min(88vw, 480px);
+      height: 78%;
+      transform: translateX(-50%);
       background:
-        radial-gradient(circle at 22% 28%, rgba(255, 196, 110, 0.16), transparent 16%),
-        radial-gradient(circle at 80% 18%, rgba(124, 191, 255, 0.12), transparent 20%),
-        linear-gradient(180deg, rgba(15, 27, 47, 0.1), rgba(5, 10, 18, 0.96) 90%);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 22%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent 10%, transparent 90%, rgba(255, 255, 255, 0.07)),
+        linear-gradient(180deg, rgba(14, 18, 28, 0.5), rgba(4, 7, 12, 0.98));
+      clip-path: polygon(45% 0, 62% 0, 100% 100%, 0 100%);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 30px rgba(130, 166, 210, 0.08),
+        0 40px 90px rgba(0, 0, 0, 0.46);
     }
 
-    .reflection::before {
+    .road::before {
       content: "";
       position: absolute;
       inset: 0;
       background:
+        linear-gradient(180deg, transparent 0%, rgba(193, 211, 241, 0.08) 58%, transparent 100%),
         repeating-linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.03) 0 2px,
-          transparent 2px 84px
-        ),
-        repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.02) 0 1px,
+          180deg,
+          rgba(255, 255, 255, 0.04) 0 1px,
           transparent 1px 26px
         );
-      opacity: 0.22;
-      transform: perspective(420px) rotateX(72deg);
-      transform-origin: top;
+      opacity: 0.4;
+    }
+
+    .center-line {
+      position: absolute;
+      left: 48.8%;
+      top: 24%;
+      width: 1.2%;
+      height: 72%;
+      background: linear-gradient(180deg, rgba(232, 181, 67, 0.08), rgba(232, 181, 67, 0.9) 18%, rgba(232, 181, 67, 0.95) 80%, rgba(232, 181, 67, 0.18));
+      clip-path: polygon(36% 0, 64% 0, 100% 100%, 0 100%);
+      filter: blur(0.2px);
+      box-shadow: 0 0 12px rgba(232, 181, 67, 0.22);
+    }
+
+    .edge-line-left,
+    .edge-line-right {
+      position: absolute;
+      top: 10%;
+      height: 90%;
+      width: 1.2%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.76));
+      filter: blur(0.1px);
+    }
+
+    .edge-line-left {
+      left: 3.2%;
+      clip-path: polygon(26% 0, 58% 0, 100% 100%, 0 100%);
+    }
+
+    .edge-line-right {
+      right: 2%;
+      clip-path: polygon(38% 0, 70% 0, 100% 100%, 0 100%);
+      opacity: 0.78;
+    }
+
+    .road-reflection {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 58% 88%, rgba(255, 255, 255, 0.18), transparent 12%),
+        radial-gradient(circle at 53% 94%, rgba(255, 243, 202, 0.2), transparent 8%),
+        radial-gradient(circle at 49% 80%, rgba(255, 255, 255, 0.08), transparent 8%),
+        linear-gradient(180deg, transparent 0%, rgba(176, 211, 244, 0.07) 68%, rgba(255, 255, 255, 0.03) 100%);
+      animation: reflectionPulse 6s ease-in-out infinite;
+    }
+
+    .left-bank,
+    .right-bank {
+      position: absolute;
+      bottom: 0;
+      width: 34%;
+      height: 54%;
+      background: linear-gradient(180deg, transparent, rgba(7, 12, 8, 0.9));
+    }
+
+    .left-bank {
+      left: 0;
+      clip-path: polygon(0 18%, 45% 0, 100% 100%, 0 100%);
+    }
+
+    .right-bank {
+      right: 0;
+      clip-path: polygon(55% 0, 100% 18%, 100% 100%, 0 100%);
+    }
+
+    .trees {
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .canopy {
+      position: absolute;
+      border-radius: 46% 54% 50% 50% / 42% 48% 52% 58%;
+      background:
+        radial-gradient(circle at 28% 26%, rgba(186, 236, 113, 0.95), transparent 16%),
+        radial-gradient(circle at 44% 32%, rgba(151, 210, 88, 0.96), transparent 18%),
+        radial-gradient(circle at 60% 26%, rgba(128, 186, 74, 0.95), transparent 17%),
+        radial-gradient(circle at 22% 52%, rgba(101, 155, 58, 0.96), transparent 18%),
+        radial-gradient(circle at 48% 56%, rgba(72, 121, 42, 0.96), transparent 22%),
+        radial-gradient(circle at 72% 54%, rgba(42, 83, 28, 0.98), transparent 20%),
+        linear-gradient(180deg, rgba(141, 194, 83, 0.82), rgba(29, 59, 22, 0.98));
+      clip-path: polygon(7% 38%, 18% 22%, 34% 14%, 51% 9%, 68% 16%, 82% 28%, 93% 46%, 89% 64%, 75% 80%, 58% 91%, 36% 89%, 18% 76%, 8% 58%);
+      filter: blur(0.55px);
+      transform-origin: center bottom;
+      animation: sway 8s ease-in-out infinite;
+      box-shadow:
+        0 0 28px rgba(80, 120, 46, 0.1),
+        inset 0 -10px 18px rgba(15, 34, 12, 0.24);
+    }
+
+    .canopy::before,
+    .canopy::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .canopy::before {
+      inset: 12% 10% 16% 14%;
+      background:
+        radial-gradient(circle at 24% 38%, rgba(170, 230, 105, 0.9), transparent 16%),
+        radial-gradient(circle at 46% 28%, rgba(120, 184, 69, 0.82), transparent 18%),
+        radial-gradient(circle at 68% 42%, rgba(66, 111, 39, 0.84), transparent 18%),
+        radial-gradient(circle at 50% 64%, rgba(34, 67, 24, 0.82), transparent 20%);
+      opacity: 0.72;
+      mix-blend-mode: multiply;
+    }
+
+    .canopy::after {
+      inset: 0;
+      background:
+        radial-gradient(circle at 26% 22%, rgba(255, 255, 255, 0.2), transparent 14%),
+        radial-gradient(circle at 54% 34%, rgba(255, 255, 255, 0.12), transparent 16%),
+        radial-gradient(circle at 78% 40%, rgba(255, 255, 255, 0.08), transparent 16%);
+      mix-blend-mode: screen;
+      opacity: 0.34;
+    }
+
+    .branch-shadow-left,
+    .branch-shadow-right {
+      position: absolute;
+      top: -2%;
+      width: 38%;
+      height: 22%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(25, 43, 17, 0.95), rgba(10, 18, 9, 0) 64%);
+      filter: blur(2px);
+      opacity: 0.9;
+      animation: swayWide 12s ease-in-out infinite;
+    }
+
+    .branch-shadow-left {
+      left: -12%;
+      transform-origin: top left;
+    }
+
+    .branch-shadow-right {
+      right: -10%;
+      transform-origin: top right;
+      animation-delay: -4s;
+    }
+
+    .street-furniture {
+      z-index: 6;
+      overflow: hidden;
+    }
+
+    .lamp-post {
+      position: absolute;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, #737b88, #313743);
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.24);
+    }
+
+    .lamp-post::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 42px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7b828f, #434b56);
+      transform-origin: left center;
+      transform: translateX(-2px) rotate(-24deg);
+    }
+
+    .lamp-head {
+      position: absolute;
+      top: 0;
+      left: 30px;
+      width: 16px;
+      height: 9px;
+      border-radius: 8px 8px 10px 10px;
+      background: linear-gradient(180deg, #d5dbe4, #6d747f);
+      transform: translateY(4px);
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.26);
+    }
+
+    .lamp-glow {
+      position: absolute;
+      top: 8px;
+      left: 24px;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 248, 216, 0.44), rgba(255, 248, 216, 0.12) 34%, rgba(255, 248, 216, 0) 72%);
+      filter: blur(1.2px);
+      animation: glowPulse 4.8s ease-in-out infinite;
+    }
+
+    .lamp-cone {
+      position: absolute;
+      top: 22px;
+      left: 8px;
+      width: 160px;
+      height: 260px;
+      background: linear-gradient(180deg, rgba(255, 243, 204, 0.16), rgba(255, 243, 204, 0.02) 40%, rgba(255, 243, 204, 0) 100%);
+      clip-path: polygon(39% 0, 61% 0, 100% 100%, 0 100%);
+      filter: blur(5px);
+      opacity: 0.46;
+    }
+
+    .rail {
+      position: absolute;
+      right: 5%;
+      bottom: 18%;
+      width: 24%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(198, 183, 161, 0), rgba(198, 183, 161, 0.95));
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.06);
+    }
+
+    .rail::before,
+    .rail::after {
+      content: "";
+      position: absolute;
+      top: -14px;
+      width: 2px;
+      height: 18px;
+      background: linear-gradient(180deg, rgba(208, 194, 173, 0.2), rgba(208, 194, 173, 0.95));
+    }
+
+    .rail::before {
+      left: 18%;
+      box-shadow: 50px 0 0 rgba(208, 194, 173, 0.85), 100px 0 0 rgba(208, 194, 173, 0.8), 150px 0 0 rgba(208, 194, 173, 0.72);
     }
 
     .mist {
-      z-index: 4;
+      z-index: 7;
       background:
-        radial-gradient(circle at 20% 78%, rgba(178, 217, 255, 0.08), transparent 22%),
-        radial-gradient(circle at 62% 86%, rgba(160, 208, 255, 0.07), transparent 26%),
-        linear-gradient(180deg, transparent 0, transparent 58%, rgba(172, 212, 255, 0.04) 78%, rgba(0, 0, 0, 0.18) 100%);
+        radial-gradient(circle at 50% 74%, rgba(173, 193, 216, 0.08), transparent 18%),
+        radial-gradient(circle at 22% 82%, rgba(173, 193, 216, 0.06), transparent 16%),
+        radial-gradient(circle at 82% 80%, rgba(173, 193, 216, 0.05), transparent 18%);
       filter: blur(8px);
-      animation: drift 14s ease-in-out infinite;
+      animation: drift 10s ease-in-out infinite;
     }
 
-    .content {
-      position: relative;
+    .rain-back,
+    .rain-front {
       z-index: 8;
-      display: grid;
-      grid-template-columns: minmax(320px, 560px) minmax(220px, 320px);
-      align-items: end;
-      gap: clamp(18px, 3vw, 42px);
-      width: 100%;
-      height: 100%;
-      padding: clamp(24px, 4vw, 56px);
+      overflow: hidden;
     }
 
-    .hero {
-      align-self: center;
-      max-width: 560px;
+    .rain-front {
+      z-index: 10;
     }
 
-    .kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(8, 18, 32, 0.26);
-      backdrop-filter: blur(12px);
-      color: var(--soft);
-      font-size: 12px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-    }
-
-    .kicker::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #fff, var(--cyan));
-      box-shadow: 0 0 12px rgba(143, 208, 255, 0.7);
-    }
-
-    h1 {
-      margin: 20px 0 16px;
-      font-size: clamp(54px, 8vw, 112px);
-      line-height: 0.92;
-      letter-spacing: -0.04em;
-      font-weight: 700;
-      text-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
-    }
-
-    h1 span {
-      display: block;
-      margin-top: 10px;
-      font-size: clamp(16px, 1.5vw, 22px);
-      font-weight: 500;
-      letter-spacing: 0.34em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.62);
-    }
-
-    .desc {
-      max-width: 500px;
-      margin: 0 0 30px;
-      color: var(--soft);
-      font-size: clamp(15px, 1.4vw, 18px);
-      line-height: 1.9;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .chip,
-    .ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      text-decoration: none;
-      color: var(--ink);
-      backdrop-filter: blur(12px);
-    }
-
-    .chip {
-      background: linear-gradient(135deg, rgba(109, 189, 255, 0.28), rgba(255, 149, 175, 0.18));
-      border-color: rgba(187, 223, 255, 0.18);
-      box-shadow: 0 12px 30px rgba(18, 51, 94, 0.24);
-    }
-
-    .ghost {
-      background: rgba(10, 19, 31, 0.28);
-      border-color: rgba(198, 225, 255, 0.12);
-      color: var(--soft);
-    }
-
-    .panel {
-      justify-self: end;
-      align-self: end;
-      width: min(320px, 100%);
-      padding: 22px;
-      border-radius: 28px;
-      border: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
-        var(--glass);
-      backdrop-filter: blur(16px) saturate(125%);
-      box-shadow:
-        0 24px 80px rgba(0, 0, 0, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    .panel-label {
-      display: inline-block;
-      margin-bottom: 12px;
-      color: rgba(255, 255, 255, 0.52);
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-    }
-
-    .panel h2 {
-      margin: 0 0 10px;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .panel p {
-      margin: 0 0 18px;
-      color: var(--soft);
-      line-height: 1.8;
-      font-size: 14px;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .metric {
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .metric strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .metric span {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .glass-streaks {
-      z-index: 9;
-      opacity: 0.42;
-    }
-
-    .streak {
-      position: absolute;
-      top: -20%;
-      width: 2px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
-      filter: blur(0.6px);
-      animation: streakFall linear infinite;
-    }
-
-    .rain-layer.back { z-index: 5; }
-    .rain-layer.mid { z-index: 7; }
-    .rain-layer.front { z-index: 10; }
-
-    .rain {
+    .drop-line {
       position: absolute;
       top: -18%;
       width: 2px;
       border-radius: 999px;
-      transform: rotate(9deg);
-      background: linear-gradient(180deg, rgba(239, 247, 255, 0.96), rgba(134, 181, 255, 0.1));
-      animation: rainFall linear infinite;
+      background: linear-gradient(180deg, rgba(240, 245, 255, 0.96), rgba(180, 199, 242, 0.08));
+      transform: rotate(8deg);
+      animation: rainfall linear infinite;
     }
 
-    .back .rain {
+    .rain-back .drop-line {
       width: 1px;
-      opacity: 0.24;
+      opacity: 0.18;
       filter: blur(0.7px);
     }
 
-    .mid .rain {
-      opacity: 0.48;
-      filter: blur(0.35px);
+    .rain-front .drop-line {
+      opacity: 0.54;
+      filter: blur(0.15px);
     }
 
-    .front .rain {
-      opacity: 0.76;
-      filter: blur(0.1px);
-    }
-
-    .drops {
+    .lens-drops {
       z-index: 11;
     }
 
-    .drop {
+    .lens-drop {
       position: absolute;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.68), rgba(192, 223, 255, 0.08) 62%, rgba(255, 255, 255, 0) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.42), rgba(210, 228, 255, 0.08) 58%, rgba(255, 255, 255, 0) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      opacity: 0.22;
+      animation: bead 6.5s ease-in-out infinite;
       backdrop-filter: blur(2px);
-      opacity: 0.26;
-      animation: beadPulse 7s ease-in-out infinite;
     }
 
-    .lightning {
+    .road-sparkles {
+      z-index: 9;
+    }
+
+    .spark {
+      position: absolute;
+      bottom: 6%;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+      animation: twinkle 2.8s ease-in-out infinite;
+    }
+
+    .corner-note {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
       z-index: 12;
-      overflow: hidden;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      background: rgba(6, 10, 16, 0.34);
+      color: rgba(230, 238, 252, 0.62);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
     }
 
-    .flash {
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0);
-      animation: flashGlow 13s ease-in-out infinite;
-    }
-
-    .bolt {
-      position: absolute;
-      top: 8%;
-      left: 66%;
-      width: 5px;
-      height: 180px;
-      opacity: 0;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0));
-      filter: blur(0.5px) drop-shadow(0 0 12px rgba(194, 223, 255, 0.72));
-      transform-origin: top;
-      transform: rotate(9deg);
-      animation: boltStrike 13s ease-in-out infinite;
-    }
-
-    .bolt::before,
-    .bolt::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      width: 6px;
-      height: 56px;
-      background: inherit;
-      transform-origin: top;
-    }
-
-    .bolt::before {
-      top: 42px;
-      transform: translateX(-50%) rotate(-24deg);
-    }
-
-    .bolt::after {
-      top: 92px;
-      transform: translateX(-50%) rotate(18deg);
-    }
-
-    @keyframes rainFall {
+    @keyframes rainfall {
       0% {
-        transform: translate3d(0, 0, 0) rotate(9deg);
+        transform: translate3d(0, 0, 0) rotate(8deg);
         opacity: 0;
       }
-      12% {
-        opacity: inherit;
-      }
-      88% {
+      10% {
         opacity: inherit;
       }
       100% {
-        transform: translate3d(26px, 125vh, 0) rotate(9deg);
+        transform: translate3d(20px, 126vh, 0) rotate(8deg);
         opacity: 0;
       }
     }
 
-    @keyframes streakFall {
-      0% {
-        transform: translate3d(0, 0, 0);
-        opacity: 0;
+    @keyframes sway {
+      0%, 100% {
+        transform: rotate(0deg) scale(1);
       }
-      12% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: translate3d(10px, 140vh, 0);
-        opacity: 0;
+      50% {
+        transform: rotate(1.5deg) scale(1.015);
       }
     }
 
-    @keyframes flashGlow {
-      0%, 15%, 100% {
-        background: rgba(255, 255, 255, 0);
+    @keyframes swayWide {
+      0%, 100% {
+        transform: rotate(0deg);
       }
-      16% {
-        background: rgba(255, 255, 255, 0.08);
-      }
-      16.8% {
-        background: rgba(214, 232, 255, 0.18);
-      }
-      17.6% {
-        background: rgba(255, 255, 255, 0);
-      }
-      63% {
-        background: rgba(255, 255, 255, 0);
-      }
-      64% {
-        background: rgba(255, 255, 255, 0.06);
-      }
-      64.5% {
-        background: rgba(214, 232, 255, 0.12);
-      }
-      65.2% {
-        background: rgba(255, 255, 255, 0);
+      50% {
+        transform: rotate(2deg);
       }
     }
 
-    @keyframes boltStrike {
-      0%, 15%, 100% {
-        opacity: 0;
-        transform: translateY(0) rotate(9deg) scaleY(1);
+    @keyframes glowPulse {
+      0%, 100% {
+        opacity: 0.78;
+        transform: scale(1);
       }
-      16% {
+      50% {
         opacity: 1;
+        transform: scale(1.06);
       }
-      16.8% {
+    }
+
+    @keyframes reflectionPulse {
+      0%, 100% {
+        opacity: 0.9;
+      }
+      50% {
         opacity: 1;
-        transform: translateY(-8px) rotate(9deg) scaleY(1.1);
-      }
-      17.6% {
-        opacity: 0;
-        transform: translateY(-14px) rotate(9deg) scaleY(1.18);
       }
     }
 
     @keyframes drift {
       0%, 100% {
-        transform: translate3d(0, 0, 0) scale(1);
+        transform: translateY(0);
       }
       50% {
-        transform: translate3d(0, -8px, 0) scale(1.03);
+        transform: translateY(-6px);
       }
     }
 
-    @keyframes breathe {
+    @keyframes bead {
       0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.76;
-      }
-    }
-
-    @keyframes beadPulse {
-      0%, 100% {
+        opacity: 0.16;
         transform: scale(1);
-        opacity: 0.22;
       }
       50% {
-        transform: scale(1.08);
-        opacity: 0.34;
+        opacity: 0.28;
+        transform: scale(1.05);
       }
     }
 
-    @media (max-width: 900px) {
-      .content {
-        grid-template-columns: 1fr;
-        align-items: end;
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.18;
+        transform: translateY(0) scale(1);
       }
-
-      .hero {
-        align-self: end;
-      }
-
-      .panel {
-        justify-self: start;
-        width: min(360px, 100%);
-      }
-
-      .moon {
-        right: 6vw;
-        top: 8vh;
+      50% {
+        opacity: 0.85;
+        transform: translateY(-2px) scale(1.4);
       }
     }
 
-    @media (max-width: 640px) {
-      .content {
-        padding: 18px;
-        gap: 16px;
+    @media (max-width: 720px) {
+      .road {
+        width: 95vw;
+        height: 80%;
       }
 
-      h1 {
-        font-size: clamp(42px, 14vw, 72px);
+      .building {
+        bottom: 40%;
       }
 
-      h1 span {
-        letter-spacing: 0.18em;
-      }
-
-      .desc {
-        font-size: 14px;
-        line-height: 1.8;
-      }
-
-      .panel {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      .metrics {
-        grid-template-columns: 1fr 1fr;
+      .corner-note {
+        left: 12px;
+        bottom: 12px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
       }
     }
   </style>
 </head>
 <body>
   <main class="scene">
-    <div class="ambient"></div>
-    <div class="moon"></div>
-    <div class="beam"></div>
+    <div class="sky-glow"></div>
 
-    <div class="skyline">
-      <div class="buildings" id="buildings"></div>
-    </div>
+    <section class="city" id="city"></section>
 
-    <div class="reflection"></div>
-    <div class="mist"></div>
-
-    <section class="content">
-      <div class="hero">
-        <div class="kicker">Rainfall Study</div>
-        <h1>雨夜城市<span>cinematic storm atmosphere</span></h1>
-        <p class="desc">
-          这一版不再只做“下雨特效”，而是把它做成更完整的电影感首页。
-          月光、霓虹、楼群、湿地反光和玻璃雨痕共同组成主体，雨只是其中一层，而不是全部。
-        </p>
-        <div class="actions">
-          <a class="chip" href="javascript:void(0)">Moonlight / Neon / Reflection</a>
-          <a class="ghost" href="javascript:void(0)">CSS Scene with Procedural Rain</a>
-        </div>
+    <section class="road-wrap">
+      <div class="left-bank"></div>
+      <div class="right-bank"></div>
+      <div class="road">
+        <div class="road-reflection"></div>
+        <div class="center-line"></div>
+        <div class="edge-line-left"></div>
+        <div class="edge-line-right"></div>
       </div>
-
-      <aside class="panel">
-        <span class="panel-label">Visual Notes</span>
-        <h2>更像成品页，而不是 demo</h2>
-        <p>
-          我把构图改成左侧主标题、右下信息卡，背景加入远近层和光源逻辑，前景再用雨痕与水珠把屏幕“封”起来，画面会稳很多。
-        </p>
-        <div class="metrics">
-          <div class="metric">
-            <strong>3</strong>
-            <span>Rain Layers</span>
-          </div>
-          <div class="metric">
-            <strong>12</strong>
-            <span>Buildings</span>
-          </div>
-          <div class="metric">
-            <strong>Glass</strong>
-            <span>Foreground</span>
-          </div>
-          <div class="metric">
-            <strong>Flash</strong>
-            <span>Storm Pulse</span>
-          </div>
-        </div>
-      </aside>
     </section>
 
-    <div class="rain-layer back" id="rainBack"></div>
-    <div class="rain-layer mid" id="rainMid"></div>
-    <div class="rain-layer front" id="rainFront"></div>
-    <div class="glass-streaks" id="glassStreaks"></div>
-    <div class="drops" id="drops"></div>
+    <section class="trees" id="trees">
+      <div class="branch-shadow-left"></div>
+      <div class="branch-shadow-right"></div>
+    </section>
 
-    <div class="lightning">
-      <div class="flash"></div>
-      <div class="bolt"></div>
-    </div>
+    <section class="street-furniture" id="street"></section>
+    <div class="rail"></div>
+    <div class="mist"></div>
+
+    <div class="rain-back" id="rainBack"></div>
+    <div class="road-sparkles" id="sparkles"></div>
+    <div class="rain-front" id="rainFront"></div>
+    <div class="lens-drops" id="lensDrops"></div>
+
+    <div class="corner-note">Rainy Street Scene</div>
   </main>
 
   <script>
-    const buildingHeights = [44, 58, 38, 66, 49, 72, 55, 62, 40, 68, 52, 46];
-    const buildingsRoot = document.getElementById("buildings");
-    const rainConfigs = [
-      { root: document.getElementById("rainBack"), count: 54, minH: 54, maxH: 92, minD: 2.2, maxD: 3.1 },
-      { root: document.getElementById("rainMid"), count: 72, minH: 72, maxH: 118, minD: 1.55, maxD: 2.25 },
-      { root: document.getElementById("rainFront"), count: 42, minH: 108, maxH: 162, minD: 1.05, maxD: 1.6 }
-    ];
+    const city = document.getElementById("city");
+    const trees = document.getElementById("trees");
+    const street = document.getElementById("street");
+    const rainBack = document.getElementById("rainBack");
+    const rainFront = document.getElementById("rainFront");
+    const sparkles = document.getElementById("sparkles");
+    const lensDrops = document.getElementById("lensDrops");
 
     function rand(min, max) {
       return Math.random() * (max - min) + min;
     }
 
-    buildingHeights.forEach((height, index) => {
-      const building = document.createElement("div");
-      building.className = "building";
-      building.style.height = `${height}%`;
+    function make(tag, className) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      return el;
+    }
 
-      const windows = document.createElement("div");
-      windows.className = "windows";
+    const buildingData = [
+      { left: 18, width: 10, height: 20, bottom: 40 },
+      { left: 30, width: 8, height: 28, bottom: 40 },
+      { left: 43, width: 9, height: 18, bottom: 40 },
+      { left: 59, width: 16, height: 42, bottom: 39 },
+      { left: 67, width: 6, height: 16, bottom: 39 }
+    ];
 
-      const rows = Math.max(6, Math.round(height / 6));
+    buildingData.forEach((item, index) => {
+      const building = make("div", "building");
+      building.style.left = `${item.left}%`;
+      building.style.width = `${item.width}%`;
+      building.style.height = `${item.height}%`;
+      building.style.bottom = `${item.bottom}%`;
+
+      const windows = make("div", "windows");
+      const rows = Math.max(7, Math.floor(item.height * 1.4));
       const total = rows * 4;
-
       for (let i = 0; i < total; i += 1) {
-        const win = document.createElement("span");
-        win.className = Math.random() > 0.58 ? "window lit" : "window";
+        const win = make("span", Math.random() > 0.62 || (index === 3 && Math.random() > 0.38) ? "win lit" : "win");
         windows.appendChild(win);
       }
 
-      if (index === 5 || index === 9) {
-        building.style.boxShadow = "inset 1px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(255,255,255,0.03), 0 0 26px rgba(95, 156, 255, 0.08)";
-      }
-
       building.appendChild(windows);
-      buildingsRoot.appendChild(building);
+      city.appendChild(building);
     });
 
-    rainConfigs.forEach((config) => {
-      for (let i = 0; i < config.count; i += 1) {
-        const rain = document.createElement("span");
-        rain.className = "rain";
-        rain.style.left = `${rand(-4, 100)}%`;
-        rain.style.height = `${rand(config.minH, config.maxH)}px`;
-        rain.style.animationDuration = `${rand(config.minD, config.maxD)}s`;
-        rain.style.animationDelay = `${rand(-4, 0)}s`;
-        config.root.appendChild(rain);
+    const canopyData = [
+      { left: -10, top: 4, width: 24, height: 18, delay: 0 },
+      { left: 2, top: 9, width: 20, height: 15, delay: -1.5 },
+      { left: -4, top: 18, width: 26, height: 18, delay: -0.8 },
+      { left: 8, top: 26, width: 18, height: 14, delay: -2.2 },
+      { left: 1, top: 38, width: 22, height: 16, delay: -1.1 },
+      { left: 10, top: 49, width: 16, height: 13, delay: -2.8 },
+      { right: -10, top: 6, width: 24, height: 18, delay: -3 },
+      { right: 1, top: 12, width: 20, height: 15, delay: -1.9 },
+      { right: -3, top: 22, width: 26, height: 18, delay: -4.1 },
+      { right: 9, top: 33, width: 18, height: 14, delay: -2.4 },
+      { right: 2, top: 46, width: 22, height: 16, delay: -3.3 },
+      { right: 11, top: 58, width: 15, height: 12, delay: -1.4 }
+    ];
+
+    canopyData.forEach((item) => {
+      const canopy = make("div", "canopy");
+      if ("left" in item) canopy.style.left = `${item.left}%`;
+      if ("right" in item) canopy.style.right = `${item.right}%`;
+      canopy.style.top = `${item.top}%`;
+      canopy.style.width = `${item.width}%`;
+      canopy.style.height = `${item.height}%`;
+      canopy.style.animationDelay = `${item.delay}s`;
+      trees.appendChild(canopy);
+    });
+
+    const lampData = [
+      { left: 12, height: 34, scale: 0.68, delay: 0 },
+      { left: 23, height: 48, scale: 0.86, delay: -1.2 },
+      { left: 39, height: 68, scale: 1.12, delay: -2.3 },
+      { right: 12, height: 54, scale: 0.96, delay: -0.4 }
+    ];
+
+    lampData.forEach((item) => {
+      const post = make("div", "lamp-post");
+      if ("left" in item) post.style.left = `${item.left}%`;
+      if ("right" in item) post.style.right = `${item.right}%`;
+      post.style.height = `${item.height}%`;
+      post.style.transform = `scale(${item.scale})`;
+
+      const head = make("div", "lamp-head");
+      const glow = make("div", "lamp-glow");
+      const cone = make("div", "lamp-cone");
+      glow.style.animationDelay = `${item.delay}s`;
+
+      post.appendChild(head);
+      post.appendChild(glow);
+      post.appendChild(cone);
+      street.appendChild(post);
+    });
+
+    function createRain(root, count, minHeight, maxHeight, minDuration, maxDuration) {
+      for (let i = 0; i < count; i += 1) {
+        const line = make("span", "drop-line");
+        line.style.left = `${rand(-6, 100)}%`;
+        line.style.height = `${rand(minHeight, maxHeight)}px`;
+        line.style.animationDuration = `${rand(minDuration, maxDuration)}s`;
+        line.style.animationDelay = `${rand(-4, 0)}s`;
+        root.appendChild(line);
       }
-    });
-
-    const streakRoot = document.getElementById("glassStreaks");
-    for (let i = 0; i < 16; i += 1) {
-      const streak = document.createElement("span");
-      streak.className = "streak";
-      streak.style.left = `${rand(0, 100)}%`;
-      streak.style.height = `${rand(180, 340)}px`;
-      streak.style.animationDuration = `${rand(6, 12)}s`;
-      streak.style.animationDelay = `${rand(-8, 0)}s`;
-      streakRoot.appendChild(streak);
     }
 
-    const dropRoot = document.getElementById("drops");
-    for (let i = 0; i < 24; i += 1) {
-      const drop = document.createElement("span");
-      const size = rand(8, 28);
-      drop.className = "drop";
+    createRain(rainBack, 110, 40, 80, 1.8, 2.8);
+    createRain(rainFront, 90, 74, 140, 0.8, 1.6);
+
+    for (let i = 0; i < 22; i += 1) {
+      const spark = make("span", "spark");
+      spark.style.left = `${rand(35, 64)}%`;
+      spark.style.bottom = `${rand(1, 10)}%`;
+      spark.style.animationDelay = `${rand(-2.8, 0)}s`;
+      spark.style.opacity = rand(0.08, 0.46);
+      sparkles.appendChild(spark);
+    }
+
+    for (let i = 0; i < 18; i += 1) {
+      const drop = make("span", "lens-drop");
+      const size = rand(8, 24);
       drop.style.width = `${size}px`;
-      drop.style.height = `${size * rand(1.1, 1.7)}px`;
-      drop.style.left = `${rand(2, 98)}%`;
-      drop.style.top = `${rand(4, 86)}%`;
+      drop.style.height = `${size * rand(1.15, 1.7)}px`;
+      drop.style.left = `${rand(3, 97)}%`;
+      drop.style.top = `${rand(4, 88)}%`;
       drop.style.animationDelay = `${rand(-5, 0)}s`;
-      dropRoot.appendChild(drop);
+      lensDrops.appendChild(drop);
     }
   </script>
 </body>
